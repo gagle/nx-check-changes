@@ -22,9 +22,9 @@ Some application examples are:
 
   `apps/*`
 
-- **token**: _string_ | optional
+- **token**: _string_ | required
 
-  GitHub token for authenticating GitHub API requests. Default value: `secrets.GITHUB_TOKEN`.
+  GitHub token for authenticating GitHub API requests.
 
 ## Outputs
 
@@ -42,6 +42,7 @@ Without globs.
 - uses: gagle/changed-directories@v1
   id: changed-directories
   with:
+    token: ${{ secrets.GITHUB_TOKEN }}
     baseDirectories: >
       apps/dir1
       apps/dir2
@@ -53,6 +54,7 @@ You typically will use globs to avoid hardcoding paths:
 - uses: gagle/changed-directories@v1
   id: changed-directories
   with:
+    token: ${{ secrets.GITHUB_TOKEN }}
     baseDirectories: apps/*
 ```
 
@@ -71,6 +73,7 @@ changed-directories:
       id: changed-directories
       uses: gagle/changed-directories@v1
       with:
+        token: ${{ secrets.GITHUB_TOKEN }}
         baseDirectories: >
           apps/*
           libs/*
