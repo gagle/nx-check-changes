@@ -40,3 +40,5 @@ jobs:
           author_name: bot
           author_email: bot@bot
           message: regenerate dist file
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
