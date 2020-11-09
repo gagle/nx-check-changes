@@ -70,6 +70,9 @@ const main = async () => {
     const files = await getChangedFiles(octokit, base, head);
     const baseDirectoriesGlob = core_1.getInput('baseDirectories', { required: true }).split(' ');
     const baseDirectories = await globby(baseDirectoriesGlob, { onlyDirectories: true });
+    console.log('Base directories:');
+    console.log(baseDirectories);
+    console.log(files);
     const changedDirectories = reduceFilesToDirectoriesMap(baseDirectories, files).join(' ');
     if (!changedDirectories) {
         console.log('No directories have been modified!');

@@ -51,23 +51,23 @@ const getChangedFiles = async (octokit: OctoKit, base: string, head: string): Pr
 
 const reduceFilesToDirectoriesMap = (baseDirectories: string[], files: string[]): string[] => {
   const findBaseDirectory = (file: string) =>
-    baseDirectories.find(dir => {
+    baseDirectories.find(dir =>
       file === dir
         ? // If a given "directory" path is equal to the file path, then the directory it's actually a
           // file, so it must be skipped
           false
-        : file.startsWith(dir);
-    });
+        : file.startsWith(dir)
+    );
 
-  const directoriesMap = files.reduce<Map<string, boolean>>((map, file) => {
+  const directoriesSet = files.reduce<Set<string>>((set, file) => {
     const dir = findBaseDirectory(file);
     if (dir) {
-      map.set(dir, true);
+      set.add(dir);
     }
-    return map;
-  }, new Map<string, boolean>());
+    return set;
+  }, new Set<string>());
 
-  return [...directoriesMap.keys()];
+  return [...directoriesSet.values()];
 };
 
 const main = async () => {
@@ -81,6 +81,10 @@ const main = async () => {
   const baseDirectoriesGlob = getInput('baseDirectories', { required: true }).split(' ');
 
   const baseDirectories = await globby(baseDirectoriesGlob, { onlyDirectories: true });
+
+  console.log('Base directories:');
+  console.log(baseDirectories);
+
   const changedDirectories = reduceFilesToDirectoriesMap(baseDirectories, files).join(' ');
 
   if (!changedDirectories) {
