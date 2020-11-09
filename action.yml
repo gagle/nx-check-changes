@@ -2,7 +2,7 @@ name: Changed Directories
 description: Detects changed directories in a push or pull request events
 branding:
   icon: folder
-  color: 73D0F7
+  color: blue
 runs:
   using: 'node12'
   main:  'dist/index.js'
