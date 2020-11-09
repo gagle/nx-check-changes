@@ -60,10 +60,9 @@ const reduceFilesToDirectoriesMap = (baseDirectories: string[], files: string[])
     });
 
   const directoriesMap = files.reduce<Map<string, boolean>>((map, file) => {
-    if (findBaseDirectory(file)) {
-      const parts = file.split('/');
-      const projectBaseDir = `${parts[0]}/${parts[1]}`;
-      map.set(projectBaseDir, true);
+    const dir = findBaseDirectory(file);
+    if (dir) {
+      map.set(dir, true);
     }
     return map;
   }, new Map<string, boolean>());

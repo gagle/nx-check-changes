@@ -55,10 +55,9 @@ const reduceFilesToDirectoriesMap = (baseDirectories, files) => {
             : file.startsWith(dir);
     });
     const directoriesMap = files.reduce((map, file) => {
-        if (findBaseDirectory(file)) {
-            const parts = file.split('/');
-            const projectBaseDir = `${parts[0]}/${parts[1]}`;
-            map.set(projectBaseDir, true);
+        const dir = findBaseDirectory(file);
+        if (dir) {
+            map.set(dir, true);
         }
         return map;
     }, new Map());
