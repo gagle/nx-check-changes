@@ -63,7 +63,7 @@ const reduceFilesToDirectoriesMap = (baseDirectories, files) => {
 };
 const main = async () => {
     const token = core_1.getInput('token') || process.env.GITHUB_TOKEN;
-    console.log(process.env.GITHUB_TOKEN);
+    console.log(process.env);
     console.log(process.version);
     const octokit = github_1.getOctokit(token);
     const { base, head } = getBaseAndHeadCommits();
