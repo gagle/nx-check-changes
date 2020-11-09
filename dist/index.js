@@ -70,14 +70,15 @@ const main = async () => {
     const baseDirectories = await globby(baseDirectoriesGlob, { onlyDirectories: true });
     console.log('Base directories:');
     console.log(baseDirectories);
-    const changedDirectories = reduceFilesToDirectoriesMap(baseDirectories, files).join(' ');
+    const changedDirectories = reduceFilesToDirectoriesMap(baseDirectories, files);
     if (!changedDirectories) {
         console.log('No directories have been modified!');
     }
     else {
-        console.log(`Directories that have been modified: ${changedDirectories}`);
+        console.log('Directories that have been modified:');
+        console.log(changedDirectories);
     }
-    core_1.setOutput('directories', changedDirectories);
+    core_1.setOutput('directories', changedDirectories.join(' '));
 };
 main().catch(error => core_1.setFailed(error));
 //# sourceMappingURL=main.js.map
