@@ -67,7 +67,7 @@ const main = async () => {
     const { base, head } = getBaseAndHeadCommits();
     const files = await getChangedFiles(octokit, base, head);
     const baseDirectoriesGlob = core_1.getInput('baseDirectories', { required: true }).split(' ');
-    console.log(baseDirectoriesGlob);
+    console.log(process.env);
     const baseDirectories = await globby(baseDirectoriesGlob, { onlyDirectories: true });
     console.log('Base directories:');
     console.log(baseDirectories);
