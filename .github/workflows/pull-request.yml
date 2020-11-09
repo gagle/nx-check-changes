@@ -37,4 +37,4 @@ jobs:
           git config user.email "bot@bot"
           git add dist
           git commit -m "regenerate dist file" || exit 0
-          git push
+          git push --set-upstream origin $(git branch --show-current)
