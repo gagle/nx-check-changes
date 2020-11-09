@@ -81,8 +81,7 @@ const main = async () => {
   const baseDirectoriesGlob = getInput('baseDirectories', { required: true }).split(' ');
 
   const baseDirectories = await globby(baseDirectoriesGlob, {
-    onlyDirectories: true,
-    cwd: process.env.GITHUB_WORKSPACE
+    onlyDirectories: true
   });
 
   console.log('Base directories:');
