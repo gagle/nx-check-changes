@@ -1,0 +1,18 @@
+name: Changed Directories
+description: Detects changed directories in a push or pull request events
+branding:
+  icon: folder
+  color: 73D0F7
+runs:
+  using: 'node12'
+  main:  'dist/index.js'
+inputs:
+  token:
+    description: GitHub token for GitHub API requests.
+    required: true
+  baseDirectories:
+    description: Space-delimited base directories.
+    required: true
+outputs:
+  directories:
+    description: Space-delimited string of changed directories

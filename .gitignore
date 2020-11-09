@@ -1,0 +1,14 @@
+/node_modules
+lib
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+npm-debug.log
+yarn-error.log
+
+.DS_Store
+Thumbs.db
