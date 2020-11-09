@@ -7,12 +7,12 @@ runs:
   using: 'node12'
   main:  'dist/index.js'
 inputs:
-  token:
-    description: GitHub token for GitHub API requests.
-    required: true
   baseDirectories:
     description: Space-delimited base directories.
     required: true
+  token:
+    description: GitHub token for authenticating GitHub API requests.
+    default: ${{ secrets.GITHUB_TOKEN }}
 outputs:
   directories:
     description: Space-delimited string of changed directories
