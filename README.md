@@ -69,6 +69,7 @@ changed-directories:
   runs-on: ubuntu-latest
 
   steps:
+    - uses: actions/checkout@v2
     - name: Detect changed directories
       id: changed-directories
       uses: gagle/changed-directories@v1
