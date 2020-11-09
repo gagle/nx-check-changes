@@ -79,7 +79,7 @@ const main = async () => {
   const files = await getChangedFiles(octokit, base, head);
 
   const baseDirectoriesGlob = getInput('baseDirectories', { required: true }).split(' ');
-
+console.log(baseDirectoriesGlob)
   const baseDirectories = await globby(baseDirectoriesGlob, { onlyDirectories: true });
 
   console.log('Base directories:');
