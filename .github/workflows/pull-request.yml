@@ -33,5 +33,7 @@ jobs:
         run: |
           npm run build
           npm run package
+          git config user.name "bot"
+          git config user.email "bot@bot"
           git add dist
-          git commit -m "regenerate dist file"
+          git commit -m "regenerate dist file" || exit 0
