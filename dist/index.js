@@ -48,20 +48,18 @@ const getChangedFiles = async (octokit, base, head) => {
     return files.map(file => file.filename);
 };
 const reduceFilesToDirectoriesMap = (baseDirectories, files) => {
-    const findBaseDirectory = (file) => baseDirectories.find(dir => {
-        file === dir
-            ?
-                false
-            : file.startsWith(dir);
-    });
-    const directoriesMap = files.reduce((map, file) => {
+    const findBaseDirectory = (file) => baseDirectories.find(dir => file === dir
+        ?
+            false
+        : file.startsWith(dir));
+    const directoriesSet = files.reduce((set, file) => {
         const dir = findBaseDirectory(file);
         if (dir) {
-            map.set(dir, true);
+            set.add(dir);
         }
-        return map;
-    }, new Map());
-    return [...directoriesMap.keys()];
+        return set;
+    }, new Set());
+    return [...directoriesSet.values()];
 };
 const main = async () => {
     const token = core_1.getInput('token', { required: true });
@@ -72,7 +70,6 @@ const main = async () => {
     const baseDirectories = await globby(baseDirectoriesGlob, { onlyDirectories: true });
     console.log('Base directories:');
     console.log(baseDirectories);
-    console.log(files);
     const changedDirectories = reduceFilesToDirectoriesMap(baseDirectories, files).join(' ');
     if (!changedDirectories) {
         console.log('No directories have been modified!');
