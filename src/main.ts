@@ -50,13 +50,14 @@ const getChangedFiles = async (octokit: OctoKit, base: string, head: string): Pr
 };
 
 const reduceFilesToDirectoriesMap = (baseDirectories: string[], files: string[]): string[] => {
-  const findBaseDirectory = (file: string) => baseDirectories.find(dir => {
-    file === dir
-      // If a given "directory" path is equal to the file path, then the directory it's actually a
-      // file, so it must be skipped
-      ? false
-      : file.startsWith(dir);
-  });
+  const findBaseDirectory = (file: string) =>
+    baseDirectories.find(dir => {
+      file === dir
+        ? // If a given "directory" path is equal to the file path, then the directory it's actually a
+          // file, so it must be skipped
+          false
+        : file.startsWith(dir);
+    });
 
   const directoriesMap = files.reduce<Map<string, boolean>>((map, file) => {
     if (findBaseDirectory(file)) {
