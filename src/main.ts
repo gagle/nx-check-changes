@@ -85,15 +85,16 @@ const main = async () => {
   console.log('Base directories:');
   console.log(baseDirectories);
 
-  const changedDirectories = reduceFilesToDirectoriesMap(baseDirectories, files).join(' ');
+  const changedDirectories = reduceFilesToDirectoriesMap(baseDirectories, files);
 
   if (!changedDirectories) {
     console.log('No directories have been modified!');
   } else {
-    console.log(`Directories that have been modified: ${changedDirectories}`);
+    console.log('Directories that have been modified:');
+    console.log(changedDirectories);
   }
 
-  setOutput('directories', changedDirectories);
+  setOutput('directories', changedDirectories.join(' '));
 };
 
 main().catch(error => setFailed(error));
