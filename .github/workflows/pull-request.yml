@@ -36,5 +36,4 @@ jobs:
           git config user.name "bot"
           git config user.email "bot@bot"
           git add dist
-          git commit -m "regenerate dist file"
-          exit 0
+          git commit -m "regenerate dist file" || exit 0
