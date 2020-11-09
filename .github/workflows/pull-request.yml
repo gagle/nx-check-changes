@@ -33,8 +33,10 @@ jobs:
         run: |
           npm run build
           npm run package
-          git config user.name "bot"
-          git config user.email "bot@bot"
-          git add dist
-          git commit -m "regenerate dist file" || exit 0
-          git push --set-upstream origin $(git branch --show-current)
+
+      - uses: EndBug/add-and-commit@v5.1.1
+        with:
+          add: 'dist'
+          author_name: bot
+          author_email: bot@bot
+          message: regenerate dist file
