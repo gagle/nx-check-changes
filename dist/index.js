@@ -50,7 +50,8 @@ const getChangedFiles = async (octokit, base, head) => {
 const reduceFilesToDirectoriesMap = (baseDirectories, files) => {
     const findBaseDirectory = (file) => baseDirectories.find(dir => {
         file === dir
-            ? false
+            ?
+                false
             : file.startsWith(dir);
     });
     const directoriesMap = files.reduce((map, file) => {
