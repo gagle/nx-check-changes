@@ -12,7 +12,6 @@ inputs:
     required: true
   token:
     description: GitHub token for authenticating GitHub API requests.
-    default: ${{ secrets.GITHUB_TOKEN }}
 outputs:
   directories:
     description: Space-delimited string of changed directories
