@@ -12,6 +12,7 @@ inputs:
     required: true
   token:
     description: GitHub token for authenticating GitHub API requests.
+    required: false
 outputs:
   directories:
     description: Space-delimited string of changed directories
