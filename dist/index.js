@@ -67,8 +67,10 @@ const main = async () => {
     const { base, head } = getBaseAndHeadCommits();
     const files = await getChangedFiles(octokit, base, head);
     const baseDirectoriesGlob = core_1.getInput('baseDirectories', { required: true }).split(' ');
-    console.log(process.cwd());
-    const baseDirectories = await globby(baseDirectoriesGlob, { onlyDirectories: true });
+    const baseDirectories = await globby(baseDirectoriesGlob, {
+        onlyDirectories: true,
+        cwd: process.env.GITHUB_WORKSPACE
+    });
     console.log('Base directories:');
     console.log(baseDirectories);
     const changedDirectories = reduceFilesToDirectoriesMap(baseDirectories, files);
