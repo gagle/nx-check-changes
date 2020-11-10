@@ -12,12 +12,12 @@ Given this directory tree:
 
 ```
 .
-┣ apps
-┃ ┣ app1
-┃ ┗ app2
-┗ libs
-  ┣ lib1
-  ┗ lib2
+├─ apps
+│  ├─ app1
+│  └─ app2
+└─ libs
+   ├─ lib1
+   └─ lib2
 ```
 
 You want to run some actions for each app or lib that is modified in a pull request. For instance, you're refactoring something internal of `lib1` and  you want to lint all the code inside it. You could use `nx affected:lint` but this will also lint apps that depend on `lib1` which is something that you know that has not been modified. This can be improved by running this GitHub action. Its output will be an array of libs and apps that has been <u>directly</u> modified. There is no dependency graph, just a diff between commits.
