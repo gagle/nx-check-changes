@@ -119,6 +119,8 @@ changed-directories:
           apps/*
           libs/*
         token: ${{ secrets.GITHUB_TOKEN }}
+  outputs:
+      directories: ${{ steps.changed-directories.outputs.directories }}
 lint:
   runs-on: ubuntu-latest
   needs: [changed-directories]
