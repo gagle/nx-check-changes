@@ -106,26 +106,28 @@ You typically will use globs to avoid hardcoding paths:
 Suppose you have `apps` and `libs` directories that you want to lint each time they are modified.
 
 ```yaml
-changed-directories:
-  runs-on: ubuntu-latest
+jobs:
+  changed-directories:
+    runs-on: ubuntu-latest
 
-  steps:
-    - uses: actions/checkout@v2
-    - name: Detect changed directories
-      id: changed-directories
-      uses: gagle/changed-directories@v1
-      with:
-        baseDirectories: >
-          apps/*
-          libs/*
-        token: ${{ secrets.GITHUB_TOKEN }}
-  outputs:
+    steps:
+      - uses: actions/checkout@v2
+      - name: Detect changed directories
+        id: changed-directories
+        uses: gagle/changed-directories@v1
+        with:
+          baseDirectories: >
+            apps/*
+            libs/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
       directories: ${{ steps.changed-directories.outputs.directories }}
-lint:
-  runs-on: ubuntu-latest
-  needs: [changed-directories]
-  if: needs.changed-directories.outputs.directories != ''
 
-  steps:
-    # Loop over 'needs.changed-directories.outputs.directories'
+  lint:
+    runs-on: ubuntu-latest
+    needs: [changed-directories]
+    if: needs.changed-directories.outputs.directories != ''
+
+    steps:
+      # Loop over 'needs.changed-directories.outputs.directories'
 ```
