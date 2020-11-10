@@ -6,7 +6,48 @@ There are times when you want to know which directories have been modified in a 
 
 Some application examples are:
 - Integration with SonarQube and SonarCloud. If you want to analyse apps or libs isolated from the others you have to create a `sonar-project.properties` file for each of them and execute the scanner one by one.
-- Linting projects. Again, for instance, with Nx you have the command `nx affected:lint` but currently this script is not useful the way it behaves because it will also lint affected projects and this is something that is not desired, we only want to lint the project that has been modified.
+- Linting projects. With Nx you have the command `nx affected:lint` but currently this script is not useful the way it behaves because it will also lint affected projects and this is something not desired, you only want to lint the project that has been modified.
+
+Given this directory tree:
+
+```
+.
+┣ apps
+┃ ┣ app1
+┃ ┗ app2
+┗ libs
+  ┣ lib1
+  ┗ lib2
+```
+
+You want to run some actions for each app or lib that is modified in a pull request. For instance, you're refactoring something internal of `lib1` and  you want to lint all the code inside it. You could use `nx affected:lint` but this will also lint apps that depend on `lib1` which is something that you know that has not been modified. This can be improved by running this GitHub action. Its output will be an array of libs and apps that has been <u>directly</u> modified. There is no dependency graph, just a diff between commits.
+
+For instance, with this input:
+
+```yaml
+baseDirectories: >
+  apps/*
+  libs/*
+```
+
+It will be expanded into the array:
+
+```js
+[
+  'apps/app1',
+  'apps/app2',
+  'libs/lib1',
+  'libs/lib2'
+]
+```
+
+If something inside `lib1` is modified in a pull request, the output will be:
+
+```js
+[
+  'libs/lib1'
+]
+```
 
 <br/>
 
@@ -42,10 +83,10 @@ Without globs.
 - uses: gagle/changed-directories@v1
   id: changed-directories
   with:
-    token: ${{ secrets.GITHUB_TOKEN }}
     baseDirectories: >
       apps/dir1
       apps/dir2
+    token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 You typically will use globs to avoid hardcoding paths:
@@ -54,8 +95,8 @@ You typically will use globs to avoid hardcoding paths:
 - uses: gagle/changed-directories@v1
   id: changed-directories
   with:
-    token: ${{ secrets.GITHUB_TOKEN }}
     baseDirectories: apps/*
+    token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 <br/>
@@ -74,10 +115,10 @@ changed-directories:
       id: changed-directories
       uses: gagle/changed-directories@v1
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
         baseDirectories: >
           apps/*
           libs/*
+        token: ${{ secrets.GITHUB_TOKEN }}
 lint:
   runs-on: ubuntu-latest
   needs: [changed-directories]
