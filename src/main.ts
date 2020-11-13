@@ -1,4 +1,4 @@
-import { getInput, info, setFailed, setOutput, warning } from '@actions/core';
+import { getInput, info, setFailed, setOutput } from '@actions/core';
 import { context, getOctokit } from '@actions/github';
 import * as globby from 'globby';
 
@@ -72,10 +72,6 @@ const reduceFilesToDirectoriesMap = (baseDirectories: string[], files: string[])
 
 const main = async () => {
   const token = process.env.GITHUB_TOKEN;
-
-  if (!token) {
-    warning('The GITHUB_TOKEN env variable is missing: the action may not work as expected.');
-  }
 
   const octokit = getOctokit(token as string);
 
