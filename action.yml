@@ -10,9 +10,6 @@ inputs:
   baseDirectories:
     description: Space-delimited base directories.
     required: true
-  token:
-    description: GitHub token for authenticating GitHub API requests.
-    required: true
 outputs:
   directories:
     description: Space-delimited string of changed directories

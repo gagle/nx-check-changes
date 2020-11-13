@@ -63,10 +63,6 @@ If something inside `lib1` is modified in a pull request, the output will be:
 
   `apps/*`
 
-- **token**: _string_ | required
-
-  GitHub token for authenticating GitHub API requests.
-
 ## Outputs
 
 - **directories**: _string_
@@ -86,7 +82,8 @@ Without globs.
     baseDirectories: >
       apps/dir1
       apps/dir2
-    token: ${{ secrets.GITHUB_TOKEN }}
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 You typically will use globs to avoid hardcoding paths:
@@ -96,7 +93,8 @@ You typically will use globs to avoid hardcoding paths:
   id: changed-directories
   with:
     baseDirectories: apps/*
-    token: ${{ secrets.GITHUB_TOKEN }}
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 <br/>
@@ -119,7 +117,8 @@ jobs:
           baseDirectories: >
             apps/*
             libs/*
-          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       directories: ${{ steps.changed-directories.outputs.directories }}
 
