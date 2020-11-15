@@ -43,34 +43,3 @@ jobs:
           message: regenerate dist file
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  test:
-    runs-on: ubuntu-latest
-    needs: [build]
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Prepare local action
-        run: |
-          mkdir -p .github/changed-directories
-          cp -r dist .github/changed-directories/dist
-          cp action.yml .github/changed-directories
-          cp package.json .github/changed-directories
-
-      - name: Prepare test
-        run: |
-          mkdir -p test/app1
-          echo 'test' >> test/app1/file.txt
-
-      - name: Run test
-        uses: ./
-        id: changed-directories
-        with:
-          baseDirectories: >
-            test/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Check expected result
-        run: ${{ steps.changed-directories.outputs.directories }} == "test/app1"
