@@ -11,10 +11,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(2186);
 const github_1 = __webpack_require__(5438);
 const globby = __webpack_require__(3398);
-const getBaseAndHeadCommits = () => {
+const getBaseAndHeadCommits = ({ base, head }) => {
     var _a, _b, _c, _d;
-    let base;
-    let head;
     switch (github_1.context.eventName) {
         case 'pull_request':
             base = (_b = (_a = github_1.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base) === null || _b === void 0 ? void 0 : _b.sha;
@@ -25,13 +23,15 @@ const getBaseAndHeadCommits = () => {
             head = github_1.context.payload.after;
             break;
         default:
-            throw new Error(`'${github_1.context.eventName}' events are not supported. Supported events: 'pull_request', 'push'`);
+            if (!base || !head) {
+                throw new Error(`Missing 'base' or 'head' for event type '${github_1.context.eventName}'`);
+            }
     }
     if (!base || !head) {
-        throw new Error(`Base or head commits are missing`);
+        throw new Error(`Base or head refs are missing`);
     }
-    core_1.info(`Base commit: ${base}`);
-    core_1.info(`Head commit: ${head}`);
+    core_1.info(`Base ref: ${base}`);
+    core_1.info(`Head ref: ${head}`);
     return {
         base,
         head
@@ -64,7 +64,10 @@ const reduceFilesToDirectoriesMap = (baseDirectories, files) => {
 const main = async () => {
     const token = process.env.GITHUB_TOKEN;
     const octokit = github_1.getOctokit(token);
-    const { base, head } = getBaseAndHeadCommits();
+    const { base, head } = getBaseAndHeadCommits({
+        base: core_1.getInput('baseRef'),
+        head: core_1.getInput('headRef')
+    });
     const files = await getChangedFiles(octokit, base, head);
     const baseDirectoriesGlob = core_1.getInput('baseDirectories', { required: true }).split(' ');
     const baseDirectories = await globby(baseDirectoriesGlob, {

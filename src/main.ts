@@ -4,10 +4,12 @@ import * as globby from 'globby';
 
 type OctoKit = ReturnType<typeof getOctokit>;
 
-const getBaseAndHeadCommits = () => {
-  let base: string | undefined;
-  let head: string | undefined;
+interface Commits {
+  base?: string;
+  head?: string;
+}
 
+const getBaseAndHeadCommits = ({ base, head }: Commits) => {
   switch (context.eventName) {
     case 'pull_request':
       base = context.payload.pull_request?.base?.sha as string;
@@ -18,17 +20,17 @@ const getBaseAndHeadCommits = () => {
       head = context.payload.after as string;
       break;
     default:
-      throw new Error(
-        `'${context.eventName}' events are not supported. Supported events: 'pull_request', 'push'`
-      );
+      if (!base || !head) {
+        throw new Error(`Missing 'base' or 'head' for event type '${context.eventName}'`);
+      }
   }
 
   if (!base || !head) {
-    throw new Error(`Base or head commits are missing`);
+    throw new Error(`Base or head refs are missing`);
   }
 
-  info(`Base commit: ${base}`);
-  info(`Head commit: ${head}`);
+  info(`Base ref: ${base}`);
+  info(`Head ref: ${head}`);
 
   return {
     base,
@@ -75,7 +77,10 @@ const main = async () => {
 
   const octokit = getOctokit(token as string);
 
-  const { base, head } = getBaseAndHeadCommits();
+  const { base, head } = getBaseAndHeadCommits({
+    base: getInput('baseRef'),
+    head: getInput('headRef')
+  });
 
   const files = await getChangedFiles(octokit, base, head);
 

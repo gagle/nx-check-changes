@@ -10,6 +10,10 @@ inputs:
   baseDirectories:
     description: Space-delimited base directories.
     required: true
+  baseRef:
+    description: Ref to the base.
+  headRef:
+    description: Ref to the head.
 outputs:
   directories:
     description: Space-delimited string of changed directories
