@@ -49,6 +49,10 @@ If something inside `lib1` is modified in a pull request, the output will be:
 ]
 ```
 
+## Event types
+
+This action automatically takes the base and head refs from the `pull_request` and `push` events. If you need to support any other event, then the `baseRef` and the `headRef` inputs need to be specified.
+
 <br/>
 
 ## Inputs
@@ -62,6 +66,14 @@ If something inside `lib1` is modified in a pull request, the output will be:
   `apps/dir1 apps/dir2`
 
   `apps/*`
+
+- **baseRef**: _string_ | optional
+
+  Base ref. Used when this action is used from a workflow for events different from `pull_request` and `push`.
+
+- **headRef**: _string_ | optional
+
+  Head ref. Used when this action is used from a workflow for events different from `pull_request` and `push`.
 
 ## Outputs
 

@@ -21,7 +21,7 @@ const getBaseAndHeadCommits = ({ base, head }: Commits) => {
       break;
     default:
       if (!base || !head) {
-        throw new Error(`Missing 'base' or 'head' for event type '${context.eventName}'`);
+        throw new Error(`Missing 'base' or 'head' refs for event type '${context.eventName}'`);
       }
   }
 
