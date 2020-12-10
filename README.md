@@ -1,6 +1,6 @@
-# changed-directories
+# nx-skip-non-affected-paths
 
-GitHub Action that detects changed directories in a push or pull request events.
+GitHub Action that checks non-affected paths by code changes in a Nx workspace.
 
 There are times when you want to know which directories have been modified in a pull request. This is especially useful for monorepo projects, for instance for [Nx workspaces](https://nx.dev/).
 

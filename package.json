@@ -1,6 +1,6 @@
 {
-  "name": "changed-directories",
-  "description": "Detects changed directories in a push or pull request events",
+  "name": "nx-skip-non-affected-paths",
+  "description": "GitHub Action that checks non-affected paths by code changes in a Nx workspace",
   "version": "1.1.0",
   "private": true,
   "main": "dist/index.js",

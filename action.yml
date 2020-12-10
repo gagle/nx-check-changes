@@ -1,5 +1,5 @@
-name: Changed Directories
-description: Detects changed directories in a push or pull request events
+name: Nx skip non-affected paths
+description: GitHub Action that checks non-affected paths by code changes in a Nx workspace.
 branding:
   icon: folder
   color: blue
