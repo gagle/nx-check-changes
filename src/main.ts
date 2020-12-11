@@ -95,7 +95,7 @@ const main = async () => {
 
   const changedApps = reduceFilesToDirectoriesMap(directories, files);
 
-  console.log('Apps that have been modified:');
+  console.log('Changed apps:');
   console.log(changedApps);
 
   setOutput('changed-apps', changedApps.join(' '));
