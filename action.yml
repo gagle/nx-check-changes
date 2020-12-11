@@ -7,13 +7,12 @@ runs:
   using: 'node12'
   main:  'dist/index.js'
 inputs:
-  baseDirectories:
-    description: Space-delimited base directories.
-    required: true
   baseRef:
     description: Ref to the base.
   headRef:
     description: Ref to the head.
 outputs:
-  directories:
-    description: Space-delimited string of changed directories
+  changed-apps:
+    description: Space-delimited string of changed apps
+  non-affected:
+    description: Whether or not code changes don't affect the apps and libs

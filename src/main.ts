@@ -84,25 +84,22 @@ const main = async () => {
 
   const files = await getChangedFiles(octokit, base, head);
 
-  const baseDirectoriesGlob = getInput('baseDirectories', { required: true }).split(' ');
+  const directoriesGlobPatterns = ['apps/*', 'libs/*'];
 
-  const baseDirectories = await globby(baseDirectoriesGlob, {
+  const directories = await globby(directoriesGlobPatterns, {
     onlyDirectories: true
   });
 
-  console.log('Base directories:');
-  console.log(baseDirectories);
+  console.log('Directories:');
+  console.log(directories);
 
-  const changedDirectories = reduceFilesToDirectoriesMap(baseDirectories, files);
+  const changedApps = reduceFilesToDirectoriesMap(directories, files);
 
-  if (!changedDirectories) {
-    console.log('No directories have been modified!');
-  } else {
-    console.log('Directories that have been modified:');
-    console.log(changedDirectories);
-  }
+  console.log('Apps that have been modified:');
+  console.log(changedApps);
 
-  setOutput('directories', changedDirectories.join(' '));
+  setOutput('changed-apps', changedApps.join(' '));
+  setOutput('non-affected', changedApps.length === 0);
 };
 
 main().catch(error => setFailed(error));

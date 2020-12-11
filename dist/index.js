@@ -24,7 +24,7 @@ const getBaseAndHeadCommits = ({ base, head }) => {
             break;
         default:
             if (!base || !head) {
-                throw new Error(`Missing 'base' or 'head' for event type '${github_1.context.eventName}'`);
+                throw new Error(`Missing 'base' or 'head' refs for event type '${github_1.context.eventName}'`);
             }
     }
     if (!base || !head) {
@@ -69,21 +69,17 @@ const main = async () => {
         head: core_1.getInput('headRef')
     });
     const files = await getChangedFiles(octokit, base, head);
-    const baseDirectoriesGlob = core_1.getInput('baseDirectories', { required: true }).split(' ');
-    const baseDirectories = await globby(baseDirectoriesGlob, {
+    const directoriesGlobPatterns = ['apps/*', 'libs/*'];
+    const directories = await globby(directoriesGlobPatterns, {
         onlyDirectories: true
     });
-    console.log('Base directories:');
-    console.log(baseDirectories);
-    const changedDirectories = reduceFilesToDirectoriesMap(baseDirectories, files);
-    if (!changedDirectories) {
-        console.log('No directories have been modified!');
-    }
-    else {
-        console.log('Directories that have been modified:');
-        console.log(changedDirectories);
-    }
-    core_1.setOutput('directories', changedDirectories.join(' '));
+    console.log('Directories:');
+    console.log(directories);
+    const changedApps = reduceFilesToDirectoriesMap(directories, files);
+    console.log('Apps that have been modified:');
+    console.log(changedApps);
+    core_1.setOutput('changed-apps', changedApps.join(' '));
+    core_1.setOutput('non-affected', changedApps.length === 0);
 };
 main().catch(error => core_1.setFailed(error));
 //# sourceMappingURL=main.js.map
