@@ -1,7 +1,7 @@
 import { getInput, info, setFailed, setOutput } from '@actions/core';
 import { context, getOctokit } from '@actions/github';
 import { NxJson } from '@nrwl/workspace';
-import { readFile } from 'fs/promises';
+import { promises as fs } from 'fs';
 import * as globby from 'globby';
 
 type OctoKit = ReturnType<typeof getOctokit>;
@@ -60,7 +60,7 @@ const getChangedFiles = async (octokit: OctoKit, base: string, head: string): Pr
 };
 
 const readNxFile = async (): Promise<NxJson> => {
-  const nxFile = await readFile('nx.json', { encoding: 'utf-8' });
+  const nxFile = await fs.readFile('nx.json', { encoding: 'utf-8' });
   return JSON.parse(nxFile) as NxJson;
 };
 

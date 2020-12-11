@@ -10,7 +10,7 @@ module.exports =
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(2186);
 const github_1 = __webpack_require__(5438);
-const promises_1 = __webpack_require__(9225);
+const fs_1 = __webpack_require__(5747);
 const globby = __webpack_require__(3398);
 const getBaseAndHeadCommits = ({ base, head }) => {
     var _a, _b, _c, _d;
@@ -49,7 +49,7 @@ const getChangedFiles = async (octokit, base, head) => {
     return files.map(file => file.filename);
 };
 const readNxFile = async () => {
-    const nxFile = await promises_1.readFile('nx.json', { encoding: 'utf-8' });
+    const nxFile = await fs_1.promises.readFile('nx.json', { encoding: 'utf-8' });
     return JSON.parse(nxFile);
 };
 const directoryFinder = (directories) => (file) => directories.find(dir => file === dir
@@ -13743,14 +13743,6 @@ module.exports = require("events");;
 
 "use strict";
 module.exports = require("fs");;
-
-/***/ }),
-
-/***/ 9225:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs/promises");;
 
 /***/ }),
 
