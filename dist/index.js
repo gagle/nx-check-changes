@@ -10,6 +10,7 @@ module.exports =
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(2186);
 const github_1 = __webpack_require__(5438);
+const promises_1 = __webpack_require__(9225);
 const globby = __webpack_require__(3398);
 const getBaseAndHeadCommits = ({ base, head }) => {
     var _a, _b, _c, _d;
@@ -47,39 +48,88 @@ const getChangedFiles = async (octokit, base, head) => {
     const files = response.data.files;
     return files.map(file => file.filename);
 };
-const reduceFilesToDirectoriesMap = (baseDirectories, files) => {
-    const findBaseDirectory = (file) => baseDirectories.find(dir => file === dir
-        ?
-            false
-        : file.startsWith(dir));
-    const directoriesSet = files.reduce((set, file) => {
-        const dir = findBaseDirectory(file);
-        if (dir) {
-            set.add(dir);
+const readNxFile = async () => {
+    const nxFile = await promises_1.readFile('nx.json', { encoding: 'utf-8' });
+    return JSON.parse(nxFile);
+};
+const directoryFinder = (directories) => (file) => directories.find(dir => file === dir
+    ?
+        false
+    : file.startsWith(dir));
+const getChanges = ({ apps, libs, implicitDependencies, changedFiles }) => {
+    const findApps = directoryFinder(apps);
+    const findLibs = directoryFinder(libs);
+    const findImplicitDependencies = (file) => implicitDependencies.find(dependency => file === dependency);
+    const changes = changedFiles.reduce((accumulatedChanges, file) => {
+        const app = findApps(file);
+        if (app) {
+            accumulatedChanges.apps.add(app);
         }
-        return set;
-    }, new Set());
-    return [...directoriesSet.values()];
+        const lib = findLibs(file);
+        if (lib) {
+            accumulatedChanges.libs.add(lib);
+        }
+        const implicitDependency = findImplicitDependencies(file);
+        if (implicitDependency) {
+            accumulatedChanges.implicitDependencies.push(implicitDependency);
+        }
+        return accumulatedChanges;
+    }, {
+        apps: new Set(),
+        libs: new Set(),
+        implicitDependencies: []
+    });
+    return {
+        apps: [...changes.apps.values()],
+        libs: [...changes.libs.values()],
+        implicitDependencies: changes.implicitDependencies
+    };
 };
 const main = async () => {
+    var _a, _b;
     const token = process.env.GITHUB_TOKEN;
     const octokit = github_1.getOctokit(token);
     const { base, head } = getBaseAndHeadCommits({
         base: core_1.getInput('baseRef'),
         head: core_1.getInput('headRef')
     });
-    const files = await getChangedFiles(octokit, base, head);
-    const directoriesGlobPatterns = ['apps/*', 'libs/*'];
-    const directories = await globby(directoriesGlobPatterns, {
+    const changedFiles = await getChangedFiles(octokit, base, head);
+    const nxFile = await readNxFile();
+    const implicitDependencies = nxFile.implicitDependencies
+        ? Object.keys(nxFile.implicitDependencies)
+        : [];
+    const appsDirPattern = `${((_a = nxFile.workspaceLayout) === null || _a === void 0 ? void 0 : _a.appsDir) || 'apps'}/*`;
+    const libsDirPattern = `${((_b = nxFile.workspaceLayout) === null || _b === void 0 ? void 0 : _b.libsDir) || 'libs'}/*`;
+    const apps = await globby(appsDirPattern, {
         onlyDirectories: true
     });
-    console.log('Directories:');
-    console.log(directories);
-    const changedApps = reduceFilesToDirectoriesMap(directories, files);
-    console.log('Changed apps:');
-    console.log(changedApps);
-    core_1.setOutput('changed-apps', changedApps.join(' '));
-    core_1.setOutput('non-affected', changedApps.length === 0);
+    const libs = await globby(libsDirPattern, {
+        onlyDirectories: true
+    });
+    console.log('apps:');
+    console.log(apps);
+    console.log('libs:');
+    console.log(libs);
+    console.log('implicit dependencies:');
+    console.log(implicitDependencies);
+    const changes = getChanges({
+        apps,
+        libs,
+        implicitDependencies,
+        changedFiles
+    });
+    console.log('changed apps:');
+    console.log(changes.apps);
+    console.log('changed libs:');
+    console.log(changes.libs);
+    console.log('changed implicit dependencies:');
+    console.log(changes.implicitDependencies);
+    core_1.setOutput('changed-apps', changes.apps.join(' '));
+    core_1.setOutput('changed-libs', changes.libs.join(' '));
+    core_1.setOutput('changed-implicit-dependencies', changes.implicitDependencies.join(' '));
+    core_1.setOutput('non-affected', changes.apps.length === 0 &&
+        changes.libs.length === 0 &&
+        changes.implicitDependencies.length === 0);
 };
 main().catch(error => core_1.setFailed(error));
 //# sourceMappingURL=main.js.map
@@ -13693,6 +13743,14 @@ module.exports = require("events");;
 
 "use strict";
 module.exports = require("fs");;
+
+/***/ }),
+
+/***/ 9225:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs/promises");;
 
 /***/ }),
 
