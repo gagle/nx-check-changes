@@ -76,7 +76,7 @@ const main = async () => {
     console.log('Directories:');
     console.log(directories);
     const changedApps = reduceFilesToDirectoriesMap(directories, files);
-    console.log('Apps that have been modified:');
+    console.log('Changed apps:');
     console.log(changedApps);
     core_1.setOutput('changed-apps', changedApps.join(' '));
     core_1.setOutput('non-affected', changedApps.length === 0);
