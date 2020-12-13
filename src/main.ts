@@ -137,23 +137,6 @@ const main = async () => {
   const appsDir = nxFile.workspaceLayout?.appsDir || 'apps';
   const libsDir = nxFile.workspaceLayout?.libsDir || 'libs';
 
-  // const apps = await globby(appsDirPattern, {
-  //   onlyDirectories: true
-  // });
-
-  // const libs = await globby(libsDirPattern, {
-  //   onlyDirectories: true
-  // });
-
-  // console.log('apps:');
-  // console.log(apps);
-
-  // console.log('libs:');
-  // console.log(libs);
-
-  // console.log('implicit dependencies:');
-  // console.log(implicitDependencies);
-
   const changes = getChanges({
     appsDir,
     libsDir,
@@ -172,9 +155,10 @@ const main = async () => {
 
   setOutput('changed-apps', changes.apps.join(' '));
   setOutput('changed-libs', changes.libs.join(' '));
+  setOutput('changed-dirs', [...changes.apps, ...changes.libs].join(' '));
   setOutput('changed-implicit-dependencies', changes.implicitDependencies.join(' '));
   setOutput(
-    'non-affected',
+    'not-affected',
     changes.apps.length === 0 &&
       changes.libs.length === 0 &&
       changes.implicitDependencies.length === 0

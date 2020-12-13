@@ -1,12 +1,14 @@
 # nx-skip-non-affected-paths
 
-GitHub Action that checks non-affected paths by code changes in a Nx workspace.
+GitHub Action that checks if a code change affects any app, lib or implicit dependency in a Nx workspace.
 
-There are times when you want to know which directories have been modified in a pull request. This is especially useful for monorepo projects, for instance for [Nx workspaces](https://nx.dev/).
+Checking-out the repository is mandatory before executing the action because it needs to read the `nx.json` file.
 
-Some application examples are:
-- Integration with SonarQube and SonarCloud. If you want to analyse apps or libs isolated from the others you have to create a `sonar-project.properties` file for each of them and execute the scanner one by one.
-- Linting projects. With Nx you have the command `nx affected:lint` but currently this script is not useful the way it behaves because it will also lint affected projects and this is something not desired, you only want to lint the project that has been modified.
+There are times when you want to know which apps, libs or implicit dependencies configured inside `nx.json` have changed from commit to commit before executing `nx affected:*` commands. If there's nothing to build, test and deploy, then you actually don't need to execute all the steps before running the nx command. This is some valious time that you can save.
+
+Some practical use cases are:
+- Integration with SonarQube or SonarCloud. If you want to analyse apps or libs isolated from the others you have to create a `sonar-project.properties` file for each of them. Then you need to go to all the apps/libs that have changed and run the scanner.
+- Linting projects. With Nx you have the command `nx affected:lint` but this script is not useful the way it behaves because it will also lint affected projects and this is something not desired, you only want to lint the project that has been modified, or even better only lint the files that changed but that's another improvement out of the scope of this GitHub action.
 
 Given this directory tree:
 
@@ -20,52 +22,13 @@ Given this directory tree:
    └─ lib2
 ```
 
-You want to run some actions for each app or lib that is modified in a pull request. For instance, you're refactoring something internal of `lib1` and  you want to lint all the code inside it. You could use `nx affected:lint` but this will also lint apps that depend on `lib1` which is something that you know that has not been modified. This can be improved by running this GitHub action. Its output will be an array of libs and apps that has been <u>directly</u> modified. There is no dependency graph, just a diff between commits.
-
-For instance, with this input:
-
-```yaml
-baseDirectories: >
-  apps/*
-  libs/*
-```
-
-It will be expanded into the array:
-
-```js
-[
-  'apps/app1',
-  'apps/app2',
-  'libs/lib1',
-  'libs/lib2'
-]
-```
-
-If something inside `lib1` is modified in a pull request, the output will be:
-
-```js
-[
-  'libs/lib1'
-]
-```
+You want to run some actions for each app or lib that is modified in a pull request. For instance, you're refactoring something internal of `lib1` and  you want to lint all the code inside it. You could use `nx affected:lint` but this will also lint apps that depend on `lib1` which is something that you know that has not been modified. This can be improved by running this GitHub action. The output will be a apace-delimited array of libs that has been <u>directly</u> modified, eg. `'libs/lib1'`. There is no dependency graph, just a diff between commits.
 
 ## Event types
 
 This action automatically takes the base and head refs from the `pull_request` and `push` events. If you need to support any other event, then the `baseRef` and the `headRef` inputs need to be specified.
 
 <br/>
-
-## Inputs
-
-- **baseDirectories**: _string_ | required
-
-  Space-delimited list of directory paths. Glob patterns are valid and will only expand to directories, not files.
-
-  Examples:
-
-  `apps/dir1 apps/dir2`
-
-  `apps/*`
 
 - **baseRef**: _string_ | optional
 
@@ -77,34 +40,31 @@ This action automatically takes the base and head refs from the `pull_request` a
 
 ## Outputs
 
-- **directories**: _string_
+- **changed-apps**: _string_
 
-  Space-delimited list of directory paths that matched the ones provided in the `baseDirectories` input. If none of the given directories have been modified, an empty string is returned. Example: `apps/dir1`.
+  Space-delimited list of app root paths that have been modified. If no apps have been modified, an empty string is returned. Example: `apps/dir1`.
+
+- **changed-libs**: _string_
+
+  Space-delimited list of lib root paths that have been modified. If no libs have been modified, an empty string is returned. Example: `libs/lib1 libs/lib2`.
+
+- **changed-implicit-dependencies**: _string_
+
+  Space-delimited list of implicit dependency files that have been modified. If none of the given directories have been modified, an empty string is returned. The implicit dependencies are read from the `nx.json` file. Example: `package.json`.
+
+- **not-affected**: _string_
+
+  Whether or not code changes affect the apps or libs. Values: `'true'` or `'false'`
 
 <br/>
 
 ## Usage
 
-Without globs.
+For a `pull_request` or `push` events.
 
 ```yaml
-- uses: gagle/changed-directories@v1
-  id: changed-directories
-  with:
-    baseDirectories: >
-      apps/dir1
-      apps/dir2
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
-You typically will use globs to avoid hardcoding paths:
-
-```yaml
-- uses: gagle/changed-directories@v1
-  id: changed-directories
-  with:
-    baseDirectories: apps/*
+- uses: gagle/nx-check-changes@v1.0.0
+  id: nx-changes
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -115,30 +75,30 @@ You typically will use globs to avoid hardcoding paths:
 
 Suppose you have `apps` and `libs` directories that you want to lint each time they are modified.
 
+You will want to have a job that stores the outputs of this action.
+
 ```yaml
 jobs:
-  changed-directories:
+  pre-run:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Detect changed directories
-        id: changed-directories
-        uses: gagle/changed-directories@v1
-        with:
-          baseDirectories: >
-            apps/*
-            libs/*
+        uses: gagle/nx-check-changes@v1.0.0
+        id: nx-changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
-      directories: ${{ steps.changed-directories.outputs.directories }}
+      changed-dirs: ${{ steps.nx-changes.outputs.changed-dirs }}
+      skip: ${{ steps.nx-changes.outputs.not-affected }}
 
   lint:
     runs-on: ubuntu-latest
-    needs: [changed-directories]
-    if: needs.changed-directories.outputs.directories != ''
+    needs: [pre-run]
+    if: needs.pre-run.outputs.skip == 'false'
 
     steps:
-      # Loop over 'needs.changed-directories.outputs.directories'
+      # Loop over 'needs.pre-run.outputs.changed-dirs'
 ```
