@@ -64,7 +64,7 @@ const readNxFile = async (): Promise<NxJson> => {
 };
 
 const dirFinder = (dir: string) => {
-  const pathRegExp = new RegExp(`(${dir}\\/.+)\\/.+`);
+  const pathRegExp = new RegExp(`(${dir}\\/[^/]+)\\/.+`);
   return (file: string) => file.match(pathRegExp)?.[1];
 };
 
