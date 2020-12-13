@@ -2,14 +2,8 @@ import { getInput, info, setFailed, setOutput } from '@actions/core';
 import { context, getOctokit } from '@actions/github';
 import { NxJson } from '@nrwl/workspace';
 import { promises as fs } from 'fs';
-import * as globby from 'globby';
 
 type OctoKit = ReturnType<typeof getOctokit>;
-
-interface Commits {
-  base?: string;
-  head?: string;
-}
 
 interface Changes {
   apps: string[];
@@ -17,7 +11,12 @@ interface Changes {
   implicitDependencies: string[];
 }
 
-const getBaseAndHeadCommits = ({ base, head }: Commits) => {
+interface Refs {
+  base: string;
+  head: string;
+}
+
+const getBaseAndHeadRefs = ({ base, head }: Partial<Refs>): Refs => {
   switch (context.eventName) {
     case 'pull_request':
       base = context.payload.pull_request?.base?.sha as string;
@@ -64,28 +63,24 @@ const readNxFile = async (): Promise<NxJson> => {
   return JSON.parse(nxFile) as NxJson;
 };
 
-const directoryFinder = (directories: string[]) => (file: string) =>
-  directories.find(dir =>
-    file === dir
-      ? // If the given path is equal to the file path, then the directory it's actually a file,
-        // so it must be skipped. Should never happen but just to sanitize.
-        false
-      : file.startsWith(dir)
-  );
+const dirFinder = (dir: string) => {
+  const pathRegExp = new RegExp(`(${dir}\\/.+)\\/.+`);
+  return (file: string) => file.match(pathRegExp)?.[1];
+};
 
 const getChanges = ({
-  apps,
-  libs,
+  appsDir,
+  libsDir,
   implicitDependencies,
   changedFiles
 }: {
-  apps: string[];
-  libs: string[];
+  appsDir: string;
+  libsDir: string;
   implicitDependencies: string[];
   changedFiles: string[];
 }): Changes => {
-  const findApps = directoryFinder(apps);
-  const findLibs = directoryFinder(libs);
+  const findApp = dirFinder(appsDir);
+  const findLib = dirFinder(libsDir);
   const findImplicitDependencies = (file: string) =>
     implicitDependencies.find(dependency => file === dependency);
 
@@ -95,11 +90,11 @@ const getChanges = ({
     implicitDependencies: string[];
   }>(
     (accumulatedChanges, file) => {
-      const app = findApps(file);
+      const app = findApp(file);
       if (app) {
         accumulatedChanges.apps.add(app);
       }
-      const lib = findLibs(file);
+      const lib = findLib(file);
       if (lib) {
         accumulatedChanges.libs.add(lib);
       }
@@ -128,7 +123,7 @@ const main = async () => {
 
   const octokit = getOctokit(token as string);
 
-  const { base, head } = getBaseAndHeadCommits({
+  const { base, head } = getBaseAndHeadRefs({
     base: getInput('baseRef'),
     head: getInput('headRef')
   });
@@ -139,29 +134,29 @@ const main = async () => {
   const implicitDependencies = nxFile.implicitDependencies
     ? Object.keys(nxFile.implicitDependencies)
     : [];
-  const appsDirPattern = `${nxFile.workspaceLayout?.appsDir || 'apps'}/*`;
-  const libsDirPattern = `${nxFile.workspaceLayout?.libsDir || 'libs'}/*`;
+  const appsDir = nxFile.workspaceLayout?.appsDir || 'apps';
+  const libsDir = nxFile.workspaceLayout?.libsDir || 'libs';
 
-  const apps = await globby(appsDirPattern, {
-    onlyDirectories: true
-  });
+  // const apps = await globby(appsDirPattern, {
+  //   onlyDirectories: true
+  // });
 
-  const libs = await globby(libsDirPattern, {
-    onlyDirectories: true
-  });
+  // const libs = await globby(libsDirPattern, {
+  //   onlyDirectories: true
+  // });
 
-  console.log('apps:');
-  console.log(apps);
+  // console.log('apps:');
+  // console.log(apps);
 
-  console.log('libs:');
-  console.log(libs);
+  // console.log('libs:');
+  // console.log(libs);
 
-  console.log('implicit dependencies:');
-  console.log(implicitDependencies);
+  // console.log('implicit dependencies:');
+  // console.log(implicitDependencies);
 
   const changes = getChanges({
-    apps,
-    libs,
+    appsDir,
+    libsDir,
     implicitDependencies,
     changedFiles
   });

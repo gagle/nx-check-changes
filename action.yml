@@ -14,5 +14,9 @@ inputs:
 outputs:
   changed-apps:
     description: Space-delimited string of changed apps
+  changed-libs:
+    description: Space-delimited string of changed libs
+  changed-implicit-dependencies:
+    description: Space-delimited string of changed implicit dependencies
   non-affected:
-    description: Whether or not code changes don't affect the apps and libs
+    description: Whether or not code changes don't affect the apps or libs

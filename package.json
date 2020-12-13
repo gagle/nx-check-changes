@@ -14,8 +14,7 @@
   },
   "dependencies": {
     "@actions/core": "1.2.6",
-    "@actions/github": "4.0.0",
-    "globby": "11.0.1"
+    "@actions/github": "4.0.0"
   },
   "devDependencies": {
     "@nrwl/workspace": "10.4.7",
