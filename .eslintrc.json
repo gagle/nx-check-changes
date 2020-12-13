@@ -60,7 +60,7 @@
 
         "prefer-arrow/prefer-arrow-functions": "error",
 
-        "simple-import-sort/sort": "error",
+        "simple-import-sort/imports": "error",
 
         "unicorn/filename-case": [
           "error",
