@@ -1,4 +1,4 @@
-# nx-skip-non-affected-paths
+# nx-check-changes
 
 GitHub Action that checks if a code change affects any app, lib or implicit dependency in a Nx workspace.
 
