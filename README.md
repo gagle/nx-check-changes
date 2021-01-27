@@ -22,7 +22,7 @@ Given this directory tree:
    └─ lib2
 ```
 
-You want to run some actions for each app or lib that is modified in a pull request. For instance, you're refactoring something internal of `lib1` and  you want to lint all the code inside it. You could use `nx affected:lint` but this will also lint apps that depend on `lib1` which is something that you know that has not been modified. This can be improved by running this GitHub action. The output will be a apace-delimited array of libs that has been <u>directly</u> modified, eg. `'libs/lib1'`. There is no dependency graph, just a diff between commits.
+You want to run some actions for each app or lib that is modified in a pull request. For instance, you're refactoring something internal of `lib1` and you want to lint all the code inside it. You could use `nx affected:lint` but this will also lint apps that depend on `lib1` which is something that you know that has not been modified. This can be improved by running this GitHub action. The output will be a space-delimited array of libs that has been <u>directly</u> modified, eg. `'libs/lib1'`. There is no dependency graph, just a diff between commits.
 
 ## Event types
 
