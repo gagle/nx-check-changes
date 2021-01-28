@@ -54,7 +54,7 @@ This action automatically takes the base and head refs from the `pull_request` a
 
 - **not-affected**: _string_
 
-  Whether or not code changes affect the apps or libs. Values: `'true'` or `'false'`
+  Whether or not code changes affect the apps or libs. Values: `'true'` or `'false'`.
 
 <br/>
 
