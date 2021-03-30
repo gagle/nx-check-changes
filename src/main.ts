@@ -36,6 +36,7 @@ const getBaseAndHeadRefs = ({ base, head }: Partial<Refs>): Refs => {
     throw new Error(`Base or head refs are missing`);
   }
 
+  info(`Event name: ${context.eventName}`);
   info(`Base ref: ${base}`);
   info(`Head ref: ${head}`);
 
