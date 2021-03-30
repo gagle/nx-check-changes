@@ -130,7 +130,7 @@ const main = async () => {
   });
 
   const changedFiles = await getChangedFiles(octokit, base, head);
-
+  console.log(changedFiles);
   const nxFile = await readNxFile();
   const implicitDependencies = nxFile.implicitDependencies
     ? Object.keys(nxFile.implicitDependencies)

@@ -30,6 +30,7 @@ const getBaseAndHeadRefs = ({ base, head }) => {
     if (!base || !head) {
         throw new Error(`Base or head refs are missing`);
     }
+    core_1.info(`Event name: ${github_1.context.eventName}`);
     core_1.info(`Base ref: ${base}`);
     core_1.info(`Head ref: ${head}`);
     return {
@@ -93,6 +94,7 @@ const main = async () => {
         head: core_1.getInput('headRef')
     });
     const changedFiles = await getChangedFiles(octokit, base, head);
+    console.log(changedFiles);
     const nxFile = await readNxFile();
     const implicitDependencies = nxFile.implicitDependencies
         ? Object.keys(nxFile.implicitDependencies)
