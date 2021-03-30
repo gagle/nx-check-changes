@@ -53,7 +53,7 @@ const readNxFile = async () => {
     return JSON.parse(nxFile);
 };
 const dirFinder = (dir) => {
-    const pathRegExp = new RegExp(`(${dir}\\/[^/]+)\\/.+`);
+    const pathRegExp = new RegExp(`^${dir}/([^/]+)`);
     return (file) => { var _a; return (_a = file.match(pathRegExp)) === null || _a === void 0 ? void 0 : _a[1]; };
 };
 const getChanges = ({ appsDir, libsDir, implicitDependencies, changedFiles }) => {
@@ -94,6 +94,7 @@ const main = async () => {
         head: core_1.getInput('headRef')
     });
     const changedFiles = await getChangedFiles(octokit, base, head);
+    console.log('changed files:');
     console.log(changedFiles);
     const nxFile = await readNxFile();
     const implicitDependencies = nxFile.implicitDependencies

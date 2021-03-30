@@ -64,8 +64,8 @@ const readNxFile = async (): Promise<NxJson> => {
   return JSON.parse(nxFile) as NxJson;
 };
 
-const dirFinder = (dir: string) => {
-  const pathRegExp = new RegExp(`(${dir}\\/[^/]+)\\/.+`);
+const dirFinder = (dir: string): ((file: string) => string | undefined) => {
+  const pathRegExp = new RegExp(`^${dir}/([^/]+)`);
   return (file: string) => file.match(pathRegExp)?.[1];
 };
 
@@ -130,7 +130,10 @@ const main = async () => {
   });
 
   const changedFiles = await getChangedFiles(octokit, base, head);
+
+  console.log('changed files:');
   console.log(changedFiles);
+
   const nxFile = await readNxFile();
   const implicitDependencies = nxFile.implicitDependencies
     ? Object.keys(nxFile.implicitDependencies)
