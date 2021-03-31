@@ -2,7 +2,7 @@ name: Feature
 on:
   pull_request:
     branches:
-      - master
+      - main
 
 env:
   NODE_VERSION: 12
