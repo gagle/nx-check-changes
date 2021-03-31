@@ -1,8 +1,3 @@
-export interface File {
-  filename: string;
-  status: ChangeStatus;
-}
-
 export enum ChangeStatus {
   Added = 'added',
   Copied = 'copied',

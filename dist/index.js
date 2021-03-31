@@ -26,34 +26,6 @@ exports.exec = exec;
 
 /***/ }),
 
-/***/ 4014:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.statusMap = exports.ChangeStatus = void 0;
-var ChangeStatus;
-(function (ChangeStatus) {
-    ChangeStatus["Added"] = "added";
-    ChangeStatus["Copied"] = "copied";
-    ChangeStatus["Deleted"] = "deleted";
-    ChangeStatus["Modified"] = "modified";
-    ChangeStatus["Renamed"] = "renamed";
-    ChangeStatus["Unmerged"] = "unmerged";
-})(ChangeStatus = exports.ChangeStatus || (exports.ChangeStatus = {}));
-exports.statusMap = {
-    A: ChangeStatus.Added,
-    C: ChangeStatus.Copied,
-    D: ChangeStatus.Deleted,
-    M: ChangeStatus.Modified,
-    R: ChangeStatus.Renamed,
-    U: ChangeStatus.Unmerged
-};
-//# sourceMappingURL=file.js.map
-
-/***/ }),
-
 /***/ 3109:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -64,7 +36,6 @@ const core_1 = __webpack_require__(2186);
 const github_1 = __webpack_require__(5438);
 const fs_1 = __webpack_require__(5747);
 const exec_1 = __webpack_require__(7757);
-const file_1 = __webpack_require__(4014);
 const getBaseAndHeadRefs = ({ base, head }) => {
     var _a, _b, _c, _d;
     if (!base && !head) {
@@ -94,10 +65,7 @@ const parseGitDiffOutput = (output) => {
     const tokens = output.split('\u0000').filter(s => s.length > 0);
     const files = [];
     for (let i = 0; i + 1 < tokens.length; i += 2) {
-        files.push({
-            status: file_1.statusMap[tokens[i]],
-            filename: tokens[i + 1]
-        });
+        files.push(tokens[i + 1]);
     }
     return files;
 };
@@ -109,9 +77,7 @@ const getChangedFiles = async (_octokit, base, head) => {
         '-z',
         `origin/${base}..origin/${head}`
     ])).stdout;
-    const diff = parseGitDiffOutput(stdout);
-    console.log(diff);
-    return [];
+    return parseGitDiffOutput(stdout);
 };
 const readNxFile = async () => {
     const nxFile = await fs_1.promises.readFile('nx.json', { encoding: 'utf-8' });

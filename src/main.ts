@@ -4,7 +4,6 @@ import { NxJson } from '@nrwl/workspace';
 import { promises as fs } from 'fs';
 
 import { exec } from './exec';
-import { File, statusMap } from './file';
 
 type OctoKit = ReturnType<typeof getOctokit>;
 
@@ -47,14 +46,11 @@ const getBaseAndHeadRefs = ({ base, head }: Partial<Refs>): Refs => {
   };
 };
 
-const parseGitDiffOutput = (output: string): File[] => {
+const parseGitDiffOutput = (output: string): string[] => {
   const tokens = output.split('\u0000').filter(s => s.length > 0);
-  const files: File[] = [];
+  const files: string[] = [];
   for (let i = 0; i + 1 < tokens.length; i += 2) {
-    files.push({
-      status: statusMap[tokens[i]],
-      filename: tokens[i + 1]
-    });
+    files.push(tokens[i + 1]);
   }
   return files;
 };
@@ -84,9 +80,8 @@ const getChangedFiles = async (
       `origin/${base}..origin/${head}`
     ])
   ).stdout;
-  const diff = parseGitDiffOutput(stdout);
-  console.log(diff);
-  return [];
+
+  return parseGitDiffOutput(stdout);
 };
 
 const readNxFile = async (): Promise<NxJson> => {
