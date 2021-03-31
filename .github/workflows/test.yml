@@ -12,7 +12,8 @@ jobs:
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
-        body: bodyyyy
-        title: titleee
-        branch: test
-        base: main
+        with:
+          body: bodyyyy
+          title: titleee
+          branch: test
+          base: main
