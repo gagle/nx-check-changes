@@ -1,18 +1,18 @@
-name: t
+name: test
 
 on:
   workflow_dispatch
 
 jobs:
-  j:
+  job:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
-        with:
-          token: 72cedbb007de41d852c379173e18ea7ef0ee7674
-          base: main
-          branch: test
-          title: title
-          body: body
+        body: bodyyyy
+        title: titleee
+        branch: test
+        base: main
