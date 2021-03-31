@@ -50,6 +50,7 @@ const getBaseAndHeadRefs = ({ base, head }) => {
                 break;
             default:
                 core_1.warning(`Unsupported event: ${github_1.context.eventName}`);
+                break;
         }
     }
     if (!base || !head) {

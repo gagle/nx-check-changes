@@ -29,6 +29,7 @@ const getBaseAndHeadRefs = ({ base, head }: Partial<Refs>): Refs => {
         break;
       default:
         warning(`Unsupported event: ${context.eventName}`);
+        break;
     }
   }
 
