@@ -148,6 +148,8 @@ const main = async () => {
     changedFiles
   });
 
+  console.log('');
+
   console.log('changed apps:');
   console.log(changes.apps);
 

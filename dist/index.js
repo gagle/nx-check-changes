@@ -133,6 +133,7 @@ const main = async () => {
         implicitDependencies,
         changedFiles
     });
+    console.log('');
     console.log('changed apps:');
     console.log(changes.apps);
     console.log('changed libs:');
