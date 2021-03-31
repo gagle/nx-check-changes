@@ -1,4 +1,4 @@
-import { getInput, info, setFailed, setOutput } from '@actions/core';
+import { getInput, info, setFailed, setOutput, warning } from '@actions/core';
 import { context } from '@actions/github';
 import { NxJson } from '@nrwl/workspace';
 import { promises as fs } from 'fs';
@@ -27,6 +27,8 @@ const getBaseAndHeadRefs = ({ base, head }: Partial<Refs>): Refs => {
         base = context.payload.before as string;
         head = context.payload.after as string;
         break;
+      default:
+        warning(`Unsupported event: ${context.eventName}`);
     }
   }
 
