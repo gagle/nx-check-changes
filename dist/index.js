@@ -70,13 +70,16 @@ const parseGitDiffOutput = (output) => {
     return files;
 };
 const getChangedFiles = async (_octokit, base, head) => {
-    const stdout = (await exec_1.exec('git', [
-        'diff',
-        '--no-renames',
-        '--name-status',
-        '-z',
-        `origin/${base}..origin/${head}`
-    ])).stdout;
+    const response = await _octokit.repos.compareCommits({
+        base,
+        head,
+        owner: github_1.context.repo.owner,
+        repo: github_1.context.repo.repo
+    });
+    console.log(response);
+    await exec_1.exec('git', ['checkout', base]);
+    await exec_1.exec('git', ['checkout', head]);
+    const stdout = (await exec_1.exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}..${head}`])).stdout;
     return parseGitDiffOutput(stdout);
 };
 const readNxFile = async () => {

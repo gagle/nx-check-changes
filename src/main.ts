@@ -60,25 +60,24 @@ const getChangedFiles = async (
   base: string,
   head: string
 ): Promise<string[]> => {
-  // const response = await octokit.repos.compareCommits({
-  //   base,
-  //   head,
-  //   owner: context.repo.owner,
-  //   repo: context.repo.repo
-  // });
+  const response = await _octokit.repos.compareCommits({
+    base,
+    head,
+    owner: context.repo.owner,
+    repo: context.repo.repo
+  });
+
+  console.log(response);
 
   // const files = response.data.files;
 
   // return files.map(file => file.filename);
 
+  await exec('git', ['checkout', base]);
+  await exec('git', ['checkout', head]);
+
   const stdout = (
-    await exec('git', [
-      'diff',
-      '--no-renames',
-      '--name-status',
-      '-z',
-      `origin/${base}..origin/${head}`
-    ])
+    await exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}..${head}`])
   ).stdout;
 
   return parseGitDiffOutput(stdout);
