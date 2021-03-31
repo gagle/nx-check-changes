@@ -102,6 +102,8 @@ const parseGitDiffOutput = (output) => {
     return files;
 };
 const getChangedFiles = async (_octokit, base, head) => {
+    await exec_1.exec('git', ['fetch', '--depth=1', '--no-tags', 'origin', base]);
+    await exec_1.exec('git', ['fetch', '--depth=1', '--no-tags', 'origin', head]);
     const stdout = (await exec_1.exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}..${head}`])).stdout;
     const diff = parseGitDiffOutput(stdout);
     console.log(diff);

@@ -75,6 +75,9 @@ const getChangedFiles = async (
 
   // return files.map(file => file.filename);
 
+  await exec('git', ['fetch', '--depth=1', '--no-tags', 'origin', base]);
+  await exec('git', ['fetch', '--depth=1', '--no-tags', 'origin', head]);
+
   const stdout = (
     await exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}..${head}`])
   ).stdout;
