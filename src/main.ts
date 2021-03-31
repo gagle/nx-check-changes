@@ -78,9 +78,8 @@ const getChangedFiles = async (
   await exec('git', ['fetch', '--depth=1', '--no-tags', 'origin', base]);
   await exec('git', ['fetch', '--depth=1', '--no-tags', 'origin', head]);
 
-  const stdout = (
-    await exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}..${head}`])
-  ).stdout;
+  const stdout = (await exec('git', ['diff', '--no-renames', '--name-status', '-z', base, head]))
+    .stdout;
   const diff = parseGitDiffOutput(stdout);
   console.log(diff);
   return [];
