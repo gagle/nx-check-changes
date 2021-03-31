@@ -17,19 +17,17 @@ interface Refs {
 }
 
 const getBaseAndHeadRefs = ({ base, head }: Partial<Refs>): Refs => {
-  switch (context.eventName) {
-    case 'pull_request':
-      base = context.payload.pull_request?.base?.sha as string;
-      head = context.payload.pull_request?.head?.sha as string;
-      break;
-    case 'push':
-      base = context.payload.before as string;
-      head = context.payload.after as string;
-      break;
-    default:
-      if (!base || !head) {
-        throw new Error(`Missing 'base' or 'head' refs for event type '${context.eventName}'`);
-      }
+  if (!base && !head) {
+    switch (context.eventName) {
+      case 'pull_request':
+        base = context.payload.pull_request?.base?.sha as string;
+        head = context.payload.pull_request?.head?.sha as string;
+        break;
+      case 'push':
+        base = context.payload.before as string;
+        head = context.payload.after as string;
+        break;
+    }
   }
 
   if (!base || !head) {

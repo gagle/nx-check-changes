@@ -13,19 +13,17 @@ const github_1 = __webpack_require__(438);
 const fs_1 = __webpack_require__(747);
 const getBaseAndHeadRefs = ({ base, head }) => {
     var _a, _b, _c, _d;
-    switch (github_1.context.eventName) {
-        case 'pull_request':
-            base = (_b = (_a = github_1.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base) === null || _b === void 0 ? void 0 : _b.sha;
-            head = (_d = (_c = github_1.context.payload.pull_request) === null || _c === void 0 ? void 0 : _c.head) === null || _d === void 0 ? void 0 : _d.sha;
-            break;
-        case 'push':
-            base = github_1.context.payload.before;
-            head = github_1.context.payload.after;
-            break;
-        default:
-            if (!base || !head) {
-                throw new Error(`Missing 'base' or 'head' refs for event type '${github_1.context.eventName}'`);
-            }
+    if (!base && !head) {
+        switch (github_1.context.eventName) {
+            case 'pull_request':
+                base = (_b = (_a = github_1.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base) === null || _b === void 0 ? void 0 : _b.sha;
+                head = (_d = (_c = github_1.context.payload.pull_request) === null || _c === void 0 ? void 0 : _c.head) === null || _d === void 0 ? void 0 : _d.sha;
+                break;
+            case 'push':
+                base = github_1.context.payload.before;
+                head = github_1.context.payload.after;
+                break;
+        }
     }
     if (!base || !head) {
         throw new Error(`Base or head refs are missing`);
