@@ -2,6 +2,9 @@ import { getInput, info, setFailed, setOutput } from '@actions/core';
 import { context, getOctokit } from '@actions/github';
 import { NxJson } from '@nrwl/workspace';
 import { promises as fs } from 'fs';
+import { EOL } from 'os';
+
+import { exec } from './exec';
 
 type OctoKit = ReturnType<typeof getOctokit>;
 
@@ -45,16 +48,20 @@ const getBaseAndHeadRefs = ({ base, head }: Partial<Refs>): Refs => {
 };
 
 const getChangedFiles = async (octokit: OctoKit, base: string, head: string): Promise<string[]> => {
-  const response = await octokit.repos.compareCommits({
-    base,
-    head,
-    owner: context.repo.owner,
-    repo: context.repo.repo
-  });
+  // const response = await octokit.repos.compareCommits({
+  //   base,
+  //   head,
+  //   owner: context.repo.owner,
+  //   repo: context.repo.repo
+  // });
 
-  const files = response.data.files;
+  // const files = response.data.files;
 
-  return files.map(file => file.filename);
+  // return files.map(file => file.filename);
+
+  const stdout = (await exec('git', ['diff', '--name-only', `${base}..${head}`])).stdout;
+  const files = stdout.split(EOL);
+  console.log(JSON.stringify(files, null, 2));
 };
 
 const readNxFile = async (): Promise<NxJson> => {
