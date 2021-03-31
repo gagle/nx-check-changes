@@ -69,14 +69,7 @@ const parseGitDiffOutput = (output) => {
     }
     return files;
 };
-const getChangedFiles = async (_octokit, base, head) => {
-    const response = await _octokit.repos.compareCommits({
-        base,
-        head,
-        owner: github_1.context.repo.owner,
-        repo: github_1.context.repo.repo
-    });
-    console.log(response);
+const getChangedFiles = async (base, head) => {
     await exec_1.exec('git', ['checkout', base]);
     await exec_1.exec('git', ['checkout', head]);
     const stdout = (await exec_1.exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}..${head}`])).stdout;
@@ -121,13 +114,11 @@ const getChanges = ({ appsDir, libsDir, implicitDependencies, changedFiles }) =>
 };
 const main = async () => {
     var _a, _b;
-    const token = process.env.GITHUB_TOKEN;
-    const octokit = github_1.getOctokit(token);
     const { base, head } = getBaseAndHeadRefs({
         base: core_1.getInput('baseRef'),
         head: core_1.getInput('headRef')
     });
-    const changedFiles = await getChangedFiles(octokit, base, head);
+    const changedFiles = await getChangedFiles(base, head);
     const nxFile = await readNxFile();
     const implicitDependencies = nxFile.implicitDependencies
         ? Object.keys(nxFile.implicitDependencies)

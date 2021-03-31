@@ -1,11 +1,9 @@
 import { getInput, info, setFailed, setOutput } from '@actions/core';
-import { context, getOctokit } from '@actions/github';
+import { context } from '@actions/github';
 import { NxJson } from '@nrwl/workspace';
 import { promises as fs } from 'fs';
 
 import { exec } from './exec';
-
-type OctoKit = ReturnType<typeof getOctokit>;
 
 interface Changes {
   apps: string[];
@@ -55,24 +53,7 @@ const parseGitDiffOutput = (output: string): string[] => {
   return files;
 };
 
-const getChangedFiles = async (
-  _octokit: OctoKit,
-  base: string,
-  head: string
-): Promise<string[]> => {
-  const response = await _octokit.repos.compareCommits({
-    base,
-    head,
-    owner: context.repo.owner,
-    repo: context.repo.repo
-  });
-
-  console.log(response);
-
-  // const files = response.data.files;
-
-  // return files.map(file => file.filename);
-
+const getChangedFiles = async (base: string, head: string): Promise<string[]> => {
   await exec('git', ['checkout', base]);
   await exec('git', ['checkout', head]);
 
@@ -144,16 +125,12 @@ const getChanges = ({
 };
 
 const main = async () => {
-  const token = process.env.GITHUB_TOKEN;
-
-  const octokit = getOctokit(token as string);
-
   const { base, head } = getBaseAndHeadRefs({
     base: getInput('baseRef'),
     head: getInput('headRef')
   });
 
-  const changedFiles = await getChangedFiles(octokit, base, head);
+  const changedFiles = await getChangedFiles(base, head);
 
   const nxFile = await readNxFile();
   const implicitDependencies = nxFile.implicitDependencies
