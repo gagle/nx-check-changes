@@ -22,7 +22,7 @@ Given this directory tree:
    └─ lib2
 ```
 
-You want to run some actions for each app or lib that is modified in a pull request. For instance, you're refactoring something internal of `lib1` and you want to lint all the code inside it. You could use `nx affected:lint` but this will also lint apps that depend on `lib1` which is something that you know that has not been modified. This can be improved by running this GitHub action. The output will be a space-delimited array of libs that has been <u>directly</u> modified, eg. `'libs/lib1'`. There is no dependency graph, just a diff between commits.
+You want to run some actions for each app or lib that is modified in a pull request. For instance, you're refactoring something internal from `lib1` and you want to lint all the code inside it. You could use `nx affected:lint` but this will also lint apps that depend on `lib1` which is something that you know that has not been modified. This can be improved by running this GitHub action. The output will be a space-delimited array of libs that has been <u>directly</u> modified, eg. `lib1`. There is no dependency graph, just a two dot diff between commits.
 
 ## Event types
 
@@ -65,8 +65,6 @@ For a `pull_request` or `push` events.
 ```yaml
 - uses: gagle/nx-check-changes@v1.0.0
   id: nx-changes
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 <br/>
@@ -88,8 +86,7 @@ jobs:
       - name: Detect changed directories
         uses: gagle/nx-check-changes@v1.0.0
         id: nx-changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     outputs:
       changed-dirs: ${{ steps.nx-changes.outputs.changed-dirs }}
       skip: ${{ steps.nx-changes.outputs.not-affected }}
