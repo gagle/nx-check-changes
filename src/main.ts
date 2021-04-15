@@ -56,6 +56,13 @@ const parseGitDiffOutput = (output: string): string[] => {
   return files;
 };
 
+const fixStdOutNullTermination = () => {
+  // Previous command uses NULL as delimiters and output is printed to stdout.
+  // We have to make sure next thing written to stdout will start on new line.
+  // Otherwise things like ::set-output wouldn't work.
+  core.info('');
+};
+
 const getChangedFiles = async (base: string, head: string): Promise<string[]> => {
   core.startGroup(`Detecting changes ${base}...${head}`);
 
@@ -66,6 +73,7 @@ const getChangedFiles = async (base: string, head: string): Promise<string[]> =>
     await exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}...${head}`])
   ).stdout;
 
+  fixStdOutNullTermination();
   core.endGroup();
 
   return parseGitDiffOutput(stdout);

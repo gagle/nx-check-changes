@@ -72,11 +72,15 @@ const parseGitDiffOutput = (output) => {
     }
     return files;
 };
+const fixStdOutNullTermination = () => {
+    core.info('');
+};
 const getChangedFiles = async (base, head) => {
     core.startGroup(`Detecting changes ${base}...${head}`);
     await exec_1.exec('git', ['checkout', base]);
     await exec_1.exec('git', ['checkout', head]);
     const stdout = (await exec_1.exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}...${head}`])).stdout;
+    fixStdOutNullTermination();
     core.endGroup();
     return parseGitDiffOutput(stdout);
 };
