@@ -33,6 +33,7 @@ exports.exec = exec;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(2186);
+const core = __webpack_require__(2186);
 const github_1 = __webpack_require__(5438);
 const fs_1 = __webpack_require__(5747);
 const exec_1 = __webpack_require__(7757);
@@ -72,8 +73,10 @@ const parseGitDiffOutput = (output) => {
     return files;
 };
 const getChangedFiles = async (base, head) => {
+    core.startGroup(`Detecting changes ${base}...${head}`);
     await exec_1.exec('git', ['fetch', '--no-tags', 'origin', base, head]);
     const stdout = (await exec_1.exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}...${head}`])).stdout;
+    core.endGroup();
     return parseGitDiffOutput(stdout);
 };
 const readNxFile = async () => {

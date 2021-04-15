@@ -1,4 +1,5 @@
 import { getInput, info, setFailed, setOutput } from '@actions/core';
+import * as core from '@actions/core';
 import { context } from '@actions/github';
 import { NxJson } from '@nrwl/workspace';
 import { promises as fs } from 'fs';
@@ -56,11 +57,15 @@ const parseGitDiffOutput = (output: string): string[] => {
 };
 
 const getChangedFiles = async (base: string, head: string): Promise<string[]> => {
+  core.startGroup(`Detecting changes ${base}...${head}`);
+
   await exec('git', ['fetch', '--no-tags', 'origin', base, head]);
 
   const stdout = (
     await exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}...${head}`])
   ).stdout;
+
+  core.endGroup();
 
   return parseGitDiffOutput(stdout);
 };
