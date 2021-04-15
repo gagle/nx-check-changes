@@ -56,11 +56,10 @@ const parseGitDiffOutput = (output: string): string[] => {
 };
 
 const getChangedFiles = async (base: string, head: string): Promise<string[]> => {
-  await exec('git', ['checkout', base]);
-  await exec('git', ['checkout', head]);
+  await exec('git', ['fetch', '--no-tags', 'origin', base, head]);
 
   const stdout = (
-    await exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}..${head}`])
+    await exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}...${head}`])
   ).stdout;
 
   return parseGitDiffOutput(stdout);

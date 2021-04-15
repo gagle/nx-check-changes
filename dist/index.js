@@ -72,9 +72,8 @@ const parseGitDiffOutput = (output) => {
     return files;
 };
 const getChangedFiles = async (base, head) => {
-    await exec_1.exec('git', ['checkout', base]);
-    await exec_1.exec('git', ['checkout', head]);
-    const stdout = (await exec_1.exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}..${head}`])).stdout;
+    await exec_1.exec('git', ['fetch', '--no-tags', 'origin', base, head]);
+    const stdout = (await exec_1.exec('git', ['diff', '--no-renames', '--name-status', '-z', `${base}...${head}`])).stdout;
     return parseGitDiffOutput(stdout);
 };
 const readNxFile = async () => {
